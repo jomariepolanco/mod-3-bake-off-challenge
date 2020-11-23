@@ -3,6 +3,19 @@
 const bakeSideBar = document.querySelector("#bakes-container")
 const mainView = document.querySelector("#detail")
 const newBakeForm = document.querySelector("#new-bake-form")
+const scoreForm = document.querySelector("#score-form")
+
+scoreForm.addEventListener("submit", event => {
+    event.preventDefault()
+    const score = parseInt(event.target.score.value)
+    const bakeId = event.target.dataset.id 
+    const scoreObj = {
+        score: score
+    }
+    updateScorePatch(scoreObj, bakeId)
+        
+
+})
 
 newBakeForm.addEventListener("submit", event => {
     event.preventDefault()
@@ -26,13 +39,12 @@ const renderMainView = bake => {
     const img = mainView.querySelector("img")
     const h1 = mainView.querySelector("h1")
     const p = mainView.querySelector(".description")
-    const rateForm = mainView.querySelector("#score-form")
     img.src = bake.image_url
     img.alt = bake.name 
     h1.textContent = bake.name 
     p.textContent = bake.description
-    rateForm.dataset.id = bake.id 
-    rateForm.score.value = bake.score
+    scoreForm.dataset.id = bake.id 
+    scoreForm.score.value = bake.score
 }
 const renderBakeSideBar = bake => {
     const li = document.createElement("li")
@@ -41,6 +53,20 @@ const renderBakeSideBar = bake => {
     bakeSideBar.append(li)
 }
 
+const updateScorePatch = (scoreObj, id) => {
+    fetch(`http://localhost:3000/bakes/${id}/ratings`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer 699a9ff1-88ca-4d77-a26e-e4bc31cfc261"
+        },
+        body: JSON.stringify(scoreObj)
+    })
+        .then(resp => resp.json())
+        .then(newScore => {
+            scoreForm.score.value = newScore.score 
+        })
+}
 const createNewBakePost = bake => {
     fetch('http://localhost:3000/bakes', {
         method: "POST",
