@@ -2,6 +2,20 @@
 // console.log("🥧")
 const bakeSideBar = document.querySelector("#bakes-container")
 const mainView = document.querySelector("#detail")
+const newBakeForm = document.querySelector("#new-bake-form")
+
+newBakeForm.addEventListener("submit", event => {
+    event.preventDefault()
+    const newBakeObj = {
+        name: event.target.name.value,
+        image_url: event.target.image_url.value, 
+        description: event.target.description.value,
+        score: 0
+    }
+
+    createNewBakePost(newBakeObj)
+    event.target.reset()
+})
 
 bakeSideBar.addEventListener("click", event => {
     const id = event.target.dataset.id 
@@ -25,6 +39,16 @@ const renderBakeSideBar = bake => {
     li.textContent = bake.name
     li.dataset.id = bake.id 
     bakeSideBar.append(li)
+}
+
+const createNewBakePost = bake => {
+    fetch('http://localhost:3000/bakes', {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(bake)
+    })
+        .then(resp => resp.json)
+        .then(newBake => renderMainView(newBake))
 }
 
 const getOneBake = id => {
