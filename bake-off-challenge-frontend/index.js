@@ -4,7 +4,18 @@ const bakeSideBar = document.querySelector("#bakes-container")
 const mainView = document.querySelector("#detail")
 const newBakeForm = document.querySelector("#new-bake-form")
 const scoreForm = document.querySelector("#score-form")
+const winnerButton = document.querySelector("#judge-bake-button")
 
+winnerButton.addEventListener("click", () => {
+    fetch('http://localhost:3000/bakes/winner')
+        .then(response => response.json())
+        .then(winner => {
+            const li = document.createElement("li")
+            li.textContent = winner.name 
+            li.className = "winner"
+            winnerButton.append(li)
+        })
+})
 scoreForm.addEventListener("submit", event => {
     event.preventDefault()
     const score = parseInt(event.target.score.value)
